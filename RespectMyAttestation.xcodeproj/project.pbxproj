@@ -3,10 +3,12 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BB0DBE9724F70AC400421D4B /* PMKFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = BB0DBE9624F70AC400421D4B /* PMKFoundation */; };
+		BB74670424F6F9EB0099C530 /* PromiseKit in Frameworks */ = {isa = PBXBuildFile; productRef = BB74670324F6F9EB0099C530 /* PromiseKit */; };
 		BB835F3624EDBE9600368EB4 /* RespectMyAttestationApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB835F3524EDBE9600368EB4 /* RespectMyAttestationApp.swift */; };
 		BB835F3824EDBE9600368EB4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB835F3724EDBE9600368EB4 /* ContentView.swift */; };
 		BB835F3A24EDBE9900368EB4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB835F3924EDBE9900368EB4 /* Assets.xcassets */; };
@@ -56,6 +58,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BB0DBE9724F70AC400421D4B /* PMKFoundation in Frameworks */,
+				BB74670424F6F9EB0099C530 /* PromiseKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -152,6 +156,10 @@
 			dependencies = (
 			);
 			name = RespectMyAttestation;
+			packageProductDependencies = (
+				BB74670324F6F9EB0099C530 /* PromiseKit */,
+				BB0DBE9624F70AC400421D4B /* PMKFoundation */,
+			);
 			productName = RespectMyAttestation;
 			productReference = BB835F3224EDBE9600368EB4 /* RespectMyAttestation.app */;
 			productType = "com.apple.product-type.application";
@@ -223,6 +231,10 @@
 				Base,
 			);
 			mainGroup = BB835F2924EDBE9600368EB4;
+			packageReferences = (
+				BB74670224F6F9EB0099C530 /* XCRemoteSwiftPackageReference "PromiseKit" */,
+				BB0DBE9524F70AC400421D4B /* XCRemoteSwiftPackageReference "Foundation" */,
+			);
 			productRefGroup = BB835F3324EDBE9600368EB4 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -588,6 +600,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		BB0DBE9524F70AC400421D4B /* XCRemoteSwiftPackageReference "Foundation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/PromiseKit/Foundation.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.3.4;
+			};
+		};
+		BB74670224F6F9EB0099C530 /* XCRemoteSwiftPackageReference "PromiseKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/mxcl/PromiseKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.13.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		BB0DBE9624F70AC400421D4B /* PMKFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BB0DBE9524F70AC400421D4B /* XCRemoteSwiftPackageReference "Foundation" */;
+			productName = PMKFoundation;
+		};
+		BB74670324F6F9EB0099C530 /* PromiseKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BB74670224F6F9EB0099C530 /* XCRemoteSwiftPackageReference "PromiseKit" */;
+			productName = PromiseKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = BB835F2A24EDBE9600368EB4 /* Project object */;
 }

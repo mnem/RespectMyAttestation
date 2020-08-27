@@ -12,6 +12,10 @@ extension Data {
         self.map { String(format: "%02hhx", $0) } .joined()
     }
 
+    var hexDescription: String {
+        "\(hexString) (\(count) bytes)"
+    }
+
     static func random(byteCount: Int) -> Data {
       var data = Data(count: byteCount)
       _ = data.withUnsafeMutableBytes {

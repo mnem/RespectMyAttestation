@@ -15,7 +15,7 @@ struct ContentView: View {
         VStack {
             Button ("Reset") {
                 atman.clearKeyId()
-            }
+            }.padding()
             Button("Go") {
                 atman.go { (message) in
                     output = message
@@ -29,6 +29,7 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+            .previewDevice("iPhone 11 Pro Max")
             .environmentObject(Atman())
     }
 }
