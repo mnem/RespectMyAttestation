@@ -11,6 +11,8 @@ import CryptoKit
 import PromiseKit
 import PMKFoundation
 
+let root = "http://192.168.86.38:8083"
+
 struct ServerChallenge: Decodable {
     let c: Data
     let id: UUID
@@ -23,6 +25,12 @@ extension ServerChallenge: CustomStringConvertible {
 }
 
 extension String: Error {}
+
+struct VerifyPacket: Encodable {
+    var attestation: Data
+    var keyId: String
+}
+
 
 class Atman: ObservableObject {
     
@@ -77,7 +85,7 @@ class Atman: ObservableObject {
     }
     
     func retrieveChallenge(keyId: String) -> Promise<ServerChallenge> {
-        let url = URL(string: "http://192.168.86.38:8000/challenge")!
+        let url = URL(string: "\(root)/challenge")!
         return firstly {
             session.dataTask(.promise, with: url)
         }.map {
@@ -101,20 +109,41 @@ class Atman: ObservableObject {
         }
     }
     
+    func verifyKey(attestation: Data, keyId: String) throws -> Promise<String> {
+//        log("Got attestation: \(attestation.hexDescription)")
+        guard let outurl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("attestation.bin") else {
+            throw "Could not create path to write to"
+        }
+        try attestation.write(to: outurl, options: .atomic)
+//        log("Written to \(url.absoluteString)")
+        
+        
+        let url = URL(string: "\(root)/verify")!
+        var request = URLRequest(url: url)
+        request.setValue("application/json", forHTTPHeaderField: "content-type")
+        request.httpMethod = "POST"
+
+        let v = VerifyPacket(attestation: attestation, keyId: keyId)
+        request.httpBody = try JSONEncoder().encode(v)
+        
+        return firstly {
+            session.dataTask(.promise, with: request)
+        }.map {
+            String(data: $0.data, encoding: .utf8)!
+        }
+    }
+    
     private func establish(log: @escaping (String) -> Void, completion: @escaping () -> Void) {
         firstly {
             self.generateKey()
         }.then { keyId in
             self.retrieveChallenge(keyId: keyId).map { ($0, keyId) }
         }.then { (challenge, keyId) in
-            self.attestKey(challenge: challenge, keyId: keyId)
+            self.attestKey(challenge: challenge, keyId: keyId).map { ($0, keyId) }
+        }.then { (attestation, keyId) in
+            try self.verifyKey(attestation: attestation, keyId: keyId)
         }.done {
-            log("Got attestation: \($0.hexDescription)")
-            guard let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("attestation.bin") else {
-                throw "Could not create path to write to"
-            }
-            try $0.write(to: url, options: .atomic)
-            log("Written to \(url.absoluteString)")
+            log("Response from server \($0)")
         }.catch {
             log("Something failed: \($0)")
         }.finally {
