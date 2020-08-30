@@ -12,6 +12,7 @@ rand = "0.7.3"
 serde = {version = "1.0.115", features = ["derive"]}
 base64 = "0.12.3"
 uuid = { version = "0.8.1", features = ["serde", "v4"] }
+serde_cbor = "0.10"
 
 [dependencies.rocket_contrib]
 version = "0.4.5"

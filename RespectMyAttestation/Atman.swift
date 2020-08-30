@@ -110,6 +110,11 @@ class Atman: ObservableObject {
             self.attestKey(challenge: challenge, keyId: keyId)
         }.done {
             log("Got attestation: \($0.hexDescription)")
+            guard let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("attestation.bin") else {
+                throw "Could not create path to write to"
+            }
+            try $0.write(to: url, options: .atomic)
+            log("Written to \(url.absoluteString)")
         }.catch {
             log("Something failed: \($0)")
         }.finally {

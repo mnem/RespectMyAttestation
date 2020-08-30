@@ -56,9 +56,28 @@ fn get_challenges(challenges: State<SharedState>) -> Json<Vec<ChallengeResponse>
     Json(v)
 }
 
+#[derive(Serialize)]
+struct VerifyPacketAttStmt {
+    x5c: Vec<Vec<u8>>,
+    receipt: Vec<u8>,
+}
+
+#[derive(Serialize)]
+struct VerifyPacket {
+    fmt: String,
+    attStmt: VerifyPacketAttStmt,
+    authData: Vec<u8>,
+}
+
+
+#[post("/verify")]
+fn post_verify(challenges: State<SharedState>) -> String {
+    "Hmmm...".to_string()
+}
+
 fn main() {
     rocket::ignite()
-        .mount("/", routes![index, get_challenge, get_challenges])
+        .mount("/", routes![index, get_challenge, get_challenges, post_verify])
         .manage(SharedState { challenges: Mutex::new(HashMap::new()) } )
         .launch();
 }
