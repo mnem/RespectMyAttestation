@@ -29,6 +29,7 @@ extension String: Error {}
 struct VerifyPacket: Encodable {
     var attestation: Data
     var keyId: String
+    var cId: UUID
 }
 
 
@@ -79,6 +80,7 @@ class Atman: ObservableObject {
                     seal.reject(error ?? "Failed without error")
                     return
                 }
+                print("keyId: \(keyId)")
                 seal.fulfill(keyId)
             }
         }
@@ -109,7 +111,7 @@ class Atman: ObservableObject {
         }
     }
     
-    func verifyKey(attestation: Data, keyId: String) throws -> Promise<String> {
+    func verifyKey(attestation: Data, keyId: String, cId: UUID) throws -> Promise<String> {
 //        log("Got attestation: \(attestation.hexDescription)")
         guard let outurl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("attestation.bin") else {
             throw "Could not create path to write to"
@@ -123,7 +125,8 @@ class Atman: ObservableObject {
         request.setValue("application/json", forHTTPHeaderField: "content-type")
         request.httpMethod = "POST"
 
-        let v = VerifyPacket(attestation: attestation, keyId: keyId)
+        let v = VerifyPacket(attestation: attestation, keyId: keyId, cId: cId)
+        print("v.keyId: \(v.keyId)")
         request.httpBody = try JSONEncoder().encode(v)
         
         return firstly {
@@ -139,9 +142,9 @@ class Atman: ObservableObject {
         }.then { keyId in
             self.retrieveChallenge(keyId: keyId).map { ($0, keyId) }
         }.then { (challenge, keyId) in
-            self.attestKey(challenge: challenge, keyId: keyId).map { ($0, keyId) }
-        }.then { (attestation, keyId) in
-            try self.verifyKey(attestation: attestation, keyId: keyId)
+            self.attestKey(challenge: challenge, keyId: keyId).map { ($0, keyId, challenge.id) }
+        }.then { (attestation, keyId, cId) in
+            try self.verifyKey(attestation: attestation, keyId: keyId, cId: cId)
         }.done {
             log("Response from server \($0)")
         }.catch {
